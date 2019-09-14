@@ -2,23 +2,49 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+let defaultTextColor = 'gray';
+let defaultStyle = {
+    color: defaultTextColor
+}
+
+function Aggregate() {
+  return (
+    <div style={{...defaultStyle, width:'40%', display:'inline-block'}}>
+        <h2>Number Text</h2>
+    </div>
+  );
+}
+
+function Filter() {
+  return (
+    <div style={{color: defaultTextColor }}>
+        <img />
+        <input type="text" />
+    </div>
+  );
+}
+function Playlist() {
+  return (
+    <div style={{...defaultStyle, width: '25%',  display:'inline-block' }}>
+        <img />
+        <h3>Playlist Name</h3>
+        <ul><li>Song</li><li>Song</li><li>Song</li></ul>
+    </div>
+  );
+}
+
+
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <h1 style={{color: defaultTextColor }}>Title</h1>
+    <Aggregate />
+    <Aggregate />
+    <Filter/>
+    <Playlist/>
+    <Playlist/>
+    <Playlist/>
+    <Playlist/>
     </div>
   );
 }
