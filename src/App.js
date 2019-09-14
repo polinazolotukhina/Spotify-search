@@ -36,7 +36,7 @@ function Playlist() {
 function App() {
   return (
     <div className="App">
-    <h1 style={defaultStyle}>Title</h1>
+    <h1 style={{defaultStyle, color: 'red'}}>Title</h1>
     <Aggregate />
     <Aggregate />
     <Filter/>
