@@ -1,10 +1,9 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-let defaultTextColor = 'gray';
+
 let defaultStyle = {
-    color: defaultTextColor
+    color: 'gray'
 }
 
 function Aggregate() {
@@ -17,7 +16,7 @@ function Aggregate() {
 
 function Filter() {
   return (
-    <div style={{color: defaultTextColor }}>
+    <div style={defaultStyle}>
         <img />
         <input type="text" />
     </div>
@@ -37,7 +36,7 @@ function Playlist() {
 function App() {
   return (
     <div className="App">
-    <h1 style={{color: defaultTextColor }}>Title</h1>
+    <h1 style={defaultStyle}>Title</h1>
     <Aggregate />
     <Aggregate />
     <Filter/>
