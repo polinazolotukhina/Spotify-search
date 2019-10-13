@@ -23,6 +23,7 @@ function Filter({ onTextChange }) {
   );
 }
 function MyPlaylist({ playlist }) {
+  console.log("I AM HERE", playlist);
   return (
     <div style={{ ...defaultStyle, width: "100%", display: "inline-block" }}>
       <img />
@@ -32,24 +33,16 @@ function MyPlaylist({ playlist }) {
 
       <div>
         {playlist.songs.map(song => (
-          <p key={song.name}>{song.name}</p>
+          <p>{song.name}</p>
         ))}
       </div>
     </div>
   );
 }
 function HourCounter({ playlists }) {
-  console.log("playlists", playlists);
-  let allSongs = playlists.reduce((songs, eachPlaylist) => {
-    return songs.concat(eachPlaylist.tracks);
-  }, []);
-
-  // let totalDuration = allSongs.reduce((sum, eachSong) => {
-  //   return sum + eachSong.total;
-  // }, 0);
   return (
     <div style={{ ...defaultStyle, width: "40%", display: "inline-block" }}>
-      <h2>{Math.round(totalDuration / 60)}hours</h2>
+      <h2>10hours</h2>
     </div>
   );
 }
@@ -87,16 +80,10 @@ function App() {
             );
             return trackDataPromise;
           });
-
           let allTracksDataPromises = Promise.all(trackDataPromises);
           let playlistPromise = allTracksDataPromises.then(trackDatas => {
             trackDatas.forEach((trackData, i) => {
-              playlists[i].trackDatas = trackData.items
-                .map(item => item.track)
-                .map(trackData => ({
-                  name: trackData.name,
-                  duration: trackData.duration_ms / 1000
-                }));
+              playlists[i].trackDatas = trackData.items.map(item => item.track);
             });
             return playlists;
           });
@@ -105,11 +92,13 @@ function App() {
         .then(playlists =>
           setServerPlaylistData({
             playlists: playlists.map(item => {
-              console.log("item", item);
+              console.log("item", item.trackDatas);
               return {
                 name: item.name,
                 imageUrl: item.images[0].url,
-                songs: item.trackDatas.slice(0, 3)
+                songs: item.trackDatas.map(trackData => ({
+                  name: trackData.name
+                }))
               };
             })
           })
@@ -124,7 +113,7 @@ function App() {
     serverPlaylistData.playlists.filter(playlist =>
       playlist.name.includes(filterString)
     );
-  console.log("serverPlaylistData", serverPlaylistData);
+  console.log("AAAA", serverPlaylistData.playlists);
   return (
     <div className="App">
       {user.user ? (
