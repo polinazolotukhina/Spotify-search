@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import queryString from "query-string";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import MyPlaylist from "./PlaylistCard";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 
 let defaultStyle = {
   color: "gray"
@@ -8,8 +13,8 @@ let defaultStyle = {
 
 function PlaylistCounter({ playlists }) {
   return (
-    <div style={{ ...defaultStyle, width: "40%", display: "inline-block" }}>
-      <h2>{playlists && playlists.length} playlists</h2>
+    <div style={{ ...defaultStyle, display: "inline-block" }}>
+      <h2>• {playlists && playlists.length} playlists • </h2>
     </div>
   );
 }
@@ -18,38 +23,27 @@ function Filter({ onTextChange }) {
   return (
     <div style={defaultStyle}>
       <img />
-      <input type="text" onChange={e => onTextChange(e.target.value)} />
+      <TextField
+        label="Search"
+        margin="normal"
+        variant="outlined"
+        onChange={e => onTextChange(e.target.value)}
+      />
     </div>
   );
 }
-function MyPlaylist({ playlist }) {
-  return (
-    <div style={{ ...defaultStyle, width: "100%", display: "inline-block" }}>
-      <img />
-      <h3>{playlist.name} PLAYLIST NAME</h3>
 
-      <img src={playlist.imageUrl} style={{ maxWidth: "300px" }} />
-
-      <div>
-        {playlist.songs.map(song => (
-          <p key={song.name}>{song.name}</p>
-        ))}
-      </div>
-    </div>
-  );
-}
 function HourCounter({ playlists }) {
-  console.log("playlists", playlists);
   let allSongs = playlists.reduce((songs, eachPlaylist) => {
-    return songs.concat(eachPlaylist.tracks);
+    return songs.concat(eachPlaylist.songs);
   }, []);
 
-  // let totalDuration = allSongs.reduce((sum, eachSong) => {
-  //   return sum + eachSong.total;
-  // }, 0);
+  let totalDuration = allSongs.reduce((sum, eachSong) => {
+    return sum + eachSong.duration;
+  }, 0);
   return (
-    <div style={{ ...defaultStyle, width: "40%", display: "inline-block" }}>
-      <h2>{Math.round(totalDuration / 60)}hours</h2>
+    <div style={{ ...defaultStyle, display: "inline-block" }}>
+      <h2>{Math.round(totalDuration / 60)} hours •</h2>
     </div>
   );
 }
@@ -67,6 +61,7 @@ function App() {
         headers: { Authorization: "Bearer " + token }
       })
         .then(response => response.json())
+
         .then(data => setUser({ user: { name: data.display_name } }));
     }
 
@@ -105,7 +100,6 @@ function App() {
         .then(playlists =>
           setServerPlaylistData({
             playlists: playlists.map(item => {
-              console.log("item", item);
               return {
                 name: item.name,
                 imageUrl: item.images[0].url,
@@ -124,37 +118,46 @@ function App() {
     serverPlaylistData.playlists.filter(playlist =>
       playlist.name.includes(filterString)
     );
-  console.log("serverPlaylistData", serverPlaylistData);
+  console.log("user", user);
   return (
     <div className="App">
-      {user.user ? (
-        <div>
-          <h1 style={{ defaultStyle, color: "red" }}>
-            {user.user.userName} {user.user.name}`'s` Playlist
-          </h1>
-          {serverPlaylistData.playlists && (
-            <div>
-              <PlaylistCounter playlists={playslistToRender} />
-              <HourCounter playlists={playslistToRender} />
-              <Filter onTextChange={text => setFilterString(text)} />
+      <Container maxWidth="lg">
+        {user.user ? (
+          <div>
+            <Typography variant="h3">
+              {user.user.userName} {user.user.name}'s Playlist
+            </Typography>
+            {serverPlaylistData.playlists && (
+              <div>
+                <Filter onTextChange={text => setFilterString(text)} />
+                <PlaylistCounter playlists={playslistToRender} />
+                <HourCounter playlists={playslistToRender} />
 
-              {playslistToRender.map(playlist => (
-                <div>
-                  <h1>HERE</h1>
-                  <MyPlaylist key={playlist.name} playlist={playlist} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : (
-        <h1
-          style={defaultStyle}
-          onClick={() => (window.location = "http://localhost:8888/login")}
-        >
-          Please Login to Spotify
-        </h1>
-      )}
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                  spacing={4}
+                >
+                  {playslistToRender.map(playlist => (
+                    <Grid item lg={4} md={4} xs={12}>
+                      <MyPlaylist key={playlist.name} playlist={playlist} />
+                    </Grid>
+                  ))}
+                </Grid>
+              </div>
+            )}
+          </div>
+        ) : (
+          <h1
+            style={defaultStyle}
+            onClick={() => (window.location = "http://localhost:8888/login")}
+          >
+            Please Login to Spotify
+          </h1>
+        )}
+      </Container>
     </div>
   );
 }
